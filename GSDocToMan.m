@@ -6,7 +6,8 @@
 
 @implementation GSDocToMan
 
-- (instancetype)initWithSection:(NSString *)sec manual:(NSString *)man date:(NSString *)date {
+- (instancetype)initWithSection:(NSString *)sec manual:(NSString *)man date:(NSString *)date
+{
   self = [super init];
   if (self)
     {
