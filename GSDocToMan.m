@@ -40,7 +40,7 @@
     {
       return @"";
     }
-  
+
   // Replace backslash with double backslash and protect leading dot on lines.
   NSMutableString *m = [NSMutableString stringWithString:s];
   [m replaceOccurrencesOfString:@"\\" withString:@"\\\\" options:0 range:NSMakeRange(0, [m length])];
@@ -81,7 +81,11 @@
 - (void)appendLine:(NSString *)line
 {
   if (line)
-    [out appendFormat:@"%@\n", line];
+    {
+      // Remove trailing spaces from the line
+      NSString *trimmedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+      [out appendFormat:@"%@\n", trimmedLine];
+    }
 }
 
 /* Preamble */
@@ -107,7 +111,7 @@
   NSArray *children = [el children];
   NSEnumerator *en = [children objectEnumerator];
   GSNode *child = nil;
-  
+
   while ((child = [en nextObject]))
     {
       NSString *t = [[[child name] lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -156,12 +160,12 @@
     {
       return @"";
     }
-  
+
   NSArray *lines = [s componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
   NSUInteger minIndent = NSNotFound;
   NSString *ln = nil;
   NSEnumerator *en = [lines objectEnumerator];
-  
+
   while ((ln = [en nextObject]))
     {
       NSString *trim = [ln stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -170,10 +174,10 @@
       while (i < [ln length] && [ln characterAtIndex:i] == ' ') i++;
       if (minIndent == NSNotFound || i < minIndent) minIndent = i;
     }
-  
+
   if (minIndent == NSNotFound || minIndent == 0)
     return [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-  
+
   NSMutableArray *outLines = [NSMutableArray arrayWithCapacity:[lines count]];
   en = [lines objectEnumerator];
   ln = nil;
@@ -342,7 +346,7 @@
       NSArray *children = [el children];
       NSEnumerator *en = [children objectEnumerator];
       GSNode *c = nil;
-      
+
       while ((c = [en nextObject]))
 	{
 	  NSString *tn = [[c.name lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -357,7 +361,7 @@
 	      break;
 	    }
 	}
-      
+
       if (hasBlock)
 	{
 	  NSArray *children = [el children];
@@ -407,7 +411,7 @@
     {
       nameEntry = [NSString stringWithFormat:@"%@ \\- %@", [self escapeManText:[title lowercaseString]], [self escapeManText:title]];
     }
-  
+
   [self appendLine:nameEntry];
   // find body wrapper
   GSNode *body = nil;
@@ -466,7 +470,7 @@
       fprintf(stderr, "XML parse error: %s\n", [[err localizedDescription] UTF8String]);
       return 2;
     }
-  
+
   GSNode *root = [builder rootNode];
   if (!root)
     {
